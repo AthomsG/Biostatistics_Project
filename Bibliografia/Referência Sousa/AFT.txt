@@ -1,0 +1,16 @@
+
+model{
+ # Priors 
+  for(l in 1:Nbetas){beta[l] ~ dnorm(0,0.001)}
+  alpha ~ dunif(0,10)
+  
+  for(i in 1:n){
+    # Survival and censoring times
+    is.censored[i] ~ dinterval(time[i],cens[i,1])
+    mu[i] <- inprod(beta[],X[i,])
+    lambda[i] <- exp(-mu[i]*alpha)
+    time[i] ~ dweib(alpha,lambda[i])
+    logli[i] <- log(time[i])
+  }
+  loglh <- sum(logli[])
+}
